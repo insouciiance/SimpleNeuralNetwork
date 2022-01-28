@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SimpleNeuralNetwork.Data;
-using SimpleNeuralNetwork.Services;
 
 namespace SimpleNeuralNetwork.Core
 {
     public class Model
     {
         public ImageDataSet DataSet { get; }
+
+        public int DataSetSize => DataSet.Entries.Count;
 
         public int SidePixelSize { get; }
 
@@ -21,13 +22,19 @@ namespace SimpleNeuralNetwork.Core
         private int[][] _imagesColors;
         private double[] _y;
 
-        public Model(ImageDataSet dataSet, int sidePixelSize = 100)
+        public Model(double[] w, double b)
         {
-            DataSet = dataSet;
-            SidePixelSize = sidePixelSize;
+            W = w;
+            B = b;
         }
 
-        public void Train(int iterationsCount = 1000)
+        public Model(ImageDataSet dataSet)
+        {
+            DataSet = dataSet;
+            SidePixelSize = dataSet.SidePixelSize;
+        }
+
+        public void Train(int iterationsCount = 500, double learningRate = 0.5)
         {
             Prepare();
 
@@ -36,9 +43,14 @@ namespace SimpleNeuralNetwork.Core
             Parallel.For(0, iterationsCount, i =>
             {
                 RunForwardPropagation();
-                double avgLoss = RunBackwardPropagation();
+                double avgLoss = RunBackwardPropagation(learningRate);
 
-                Console.WriteLine($"i == {iterationsDone++} loss == {avgLoss}");
+                iterationsDone++;
+
+                if (iterationsDone % 50 == 0)
+                {
+                    Console.WriteLine($"i == {iterationsDone} loss == {avgLoss}");
+                }
             });
         }
 
@@ -47,10 +59,10 @@ namespace SimpleNeuralNetwork.Core
             W = new double[SidePixelSize * SidePixelSize * 3];
             B = 0;
 
-            _y = new double[DataSet.Entries.Count];
-            _imagesColors = new int[DataSet.Entries.Count][];
+            _y = new double[DataSetSize];
+            _imagesColors = new int[DataSetSize][];
 
-            for (int i = 0; i < DataSet.Entries.Count; i++)
+            for (int i = 0; i < DataSetSize; i++)
             {
                 ImageDataSetEntry entry = DataSet.Entries[i];
                 _imagesColors[i] = entry.Colors;
@@ -59,7 +71,7 @@ namespace SimpleNeuralNetwork.Core
 
         private void RunForwardPropagation()
         {
-            Parallel.For(0, DataSet.Entries.Count, i =>
+            Parallel.For(0, DataSetSize, i =>
             {
                 int[] x = _imagesColors[i];
 
@@ -72,13 +84,13 @@ namespace SimpleNeuralNetwork.Core
             });
         }
 
-        private double RunBackwardPropagation(double learningRate = 0.005)
+        private double RunBackwardPropagation(double learningRate)
         {
             double totalLoss = 0;
             double[] totalDw = new double[SidePixelSize * SidePixelSize * 3];
             double totalDb = 0;
 
-            Parallel.For(0, DataSet.Entries.Count, i =>
+            Parallel.For(0, DataSetSize, i =>
             {
                 double y = DataSet.Entries[i].Truthy ? 1 : 0;
                 double a = _y[i];
@@ -106,16 +118,16 @@ namespace SimpleNeuralNetwork.Core
                 totalDb += db;
             });
 
-            double avgLoss = totalLoss / DataSet.Entries.Count;
+            double avgLoss = totalLoss / DataSetSize;
             
             double[] avgDw = new double[SidePixelSize * SidePixelSize * 3];
 
             for (int i = 0; i < totalDw.Length; i++)
             {
-                avgDw[i] = totalDw[i] / DataSet.Entries.Count;
+                avgDw[i] = totalDw[i] / DataSetSize;
             }
 
-            double avgDb = totalDb / DataSet.Entries.Count;
+            double avgDb = totalDb / DataSetSize;
 
             for (int i = 0; i < W.Length; i++)
             {
@@ -134,6 +146,6 @@ namespace SimpleNeuralNetwork.Core
             return Sigmoid(z);
         }
 
-        private double Sigmoid(double x) => 1 / (1 + Math.Exp(-x));
+        private static double Sigmoid(double x) => 1 / (1 + Math.Exp(-x));
     }
 }

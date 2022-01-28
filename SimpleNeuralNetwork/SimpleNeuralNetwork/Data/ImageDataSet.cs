@@ -15,6 +15,8 @@ namespace SimpleNeuralNetwork.Data
 
         public List<ImageDataSetEntry> Entries { get; } = new ();
 
+        public int SidePixelSize { get; }
+
         public ImageDataSet(string truthyDirectory, string falsyDirectory, int sideSize, int? imagesLimit = null)
         {
             if (!Directory.Exists(truthyDirectory))
@@ -32,6 +34,8 @@ namespace SimpleNeuralNetwork.Data
 
             string[] truthyImagePaths = Directory.GetFiles(TruthyDirectory);
             string[] falsyImagePaths = Directory.GetFiles(FalsyDirectory);
+
+            SidePixelSize = sideSize;
 
             int truthyImagesCount = 0;
             int falsyImagesCount = 0;
