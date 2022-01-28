@@ -29,10 +29,7 @@ namespace SimpleNeuralNetwork.Data
 
             TruthyDirectory = truthyDirectory;
             FalsyDirectory = falsyDirectory;
-        }
 
-        public void Load()
-        {
             string[] truthyImagePaths = Directory.GetFiles(TruthyDirectory);
             string[] falsyImagePaths = Directory.GetFiles(FalsyDirectory);
 
