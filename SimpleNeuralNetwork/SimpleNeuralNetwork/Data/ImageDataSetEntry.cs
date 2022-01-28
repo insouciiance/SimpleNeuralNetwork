@@ -4,16 +4,22 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SimpleNeuralNetwork.Services;
 
 namespace SimpleNeuralNetwork.Data
 {
-    public record ImageDataSetEntry(string Path, bool Truthy)
+    public class ImageDataSetEntry
     {
-        public Bitmap GetBitmap(int size)
+        public int[] Colors { get; }
+
+        public bool Truthy { get; }
+
+        public ImageDataSetEntry(string path, int sideSize, bool truthy)
         {
-            Bitmap original = (Bitmap) Image.FromFile(Path);
-            Bitmap resized = new (original, new Size(size, size));
-            return resized;
+            Truthy = truthy;
+            Bitmap original = (Bitmap)Image.FromFile(path);
+            Bitmap resized = new(original, new Size(sideSize, sideSize));
+            Colors = BitmapColorService.GetBitmapColors(resized);
         }
     }
 }

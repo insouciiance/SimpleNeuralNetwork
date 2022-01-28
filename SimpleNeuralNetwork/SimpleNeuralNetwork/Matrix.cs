@@ -84,44 +84,44 @@ namespace SimpleNeuralNetwork
             _matrix = copy;
         }
 
-        public Matrix(params double[] inputArray)
+        public Matrix(double[] inputArray)
         {
-            inputArray ??= new double[1];
-
-            if (inputArray.Length == 0)
+            if (inputArray == null)
             {
-                inputArray = new double[1];
+                _matrix = new double[0, 0];
+                return;
             }
 
-            int arrayLength = inputArray.Length;
-            int sizeDivider = (int)Math.Sqrt(arrayLength);
+            int matrixColumns = inputArray.Length;
 
-            while (sizeDivider > 0)
+            double[,] copy = new double[1, matrixColumns];
+
+            for (int j = 0; j < matrixColumns; j++)
             {
-                if (arrayLength % sizeDivider == 0)
-                {
-                    break;
-                }
-
-                sizeDivider--;
+                copy[0, j] = inputArray[j];
             }
 
-            int rowsCount = sizeDivider;
-            int columnsCount = arrayLength / rowsCount;
+            _matrix = copy;
+        }
 
-            double[,] matrix = new double[rowsCount, columnsCount];
-            int indexCounter = 0;
-
-            for (int i = 0; i < rowsCount; i++)
+        public Matrix(int[] inputArray)
+        {
+            if (inputArray == null)
             {
-                for (int j = 0; j < columnsCount; j++)
-                {
-                    matrix[i, j] = inputArray[indexCounter];
-                    indexCounter++;
-                }
+                _matrix = new double[0, 0];
+                return;
             }
 
-            _matrix = matrix;
+            int matrixColumns = inputArray.Length;
+
+            double[,] copy = new double[1, matrixColumns];
+
+            for (int j = 0; j < matrixColumns; j++)
+            {
+                copy[0, j] = inputArray[j];
+            }
+
+            _matrix = copy;
         }
 
         public int GetRank()
@@ -731,6 +731,8 @@ namespace SimpleNeuralNetwork
 
             return copy;
         }
+
+        public double this[int i, int j] => _matrix[i, j];
 
         public override string ToString()
         {

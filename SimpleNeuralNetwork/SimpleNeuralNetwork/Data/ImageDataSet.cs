@@ -15,7 +15,7 @@ namespace SimpleNeuralNetwork.Data
 
         public List<ImageDataSetEntry> Entries { get; } = new ();
 
-        public ImageDataSet(string truthyDirectory, string falsyDirectory)
+        public ImageDataSet(string truthyDirectory, string falsyDirectory, int sideSize, int? imagesLimit = null)
         {
             if (!Directory.Exists(truthyDirectory))
             {
@@ -33,14 +33,29 @@ namespace SimpleNeuralNetwork.Data
             string[] truthyImagePaths = Directory.GetFiles(TruthyDirectory);
             string[] falsyImagePaths = Directory.GetFiles(FalsyDirectory);
 
+            int truthyImagesCount = 0;
+            int falsyImagesCount = 0;
+
             foreach (string truthyImagePath in truthyImagePaths)
             {
-                Entries.Add(new ImageDataSetEntry(truthyImagePath, true));
+                if (truthyImagesCount >= imagesLimit)
+                {
+                    break;
+                }
+
+                Entries.Add(new ImageDataSetEntry(truthyImagePath, sideSize, true));
+                truthyImagesCount++;
             }
 
             foreach (string falsyImagePath in falsyImagePaths)
             {
-                Entries.Add(new ImageDataSetEntry(falsyImagePath, false));
+                if (falsyImagesCount >= imagesLimit)
+                {
+                    break;
+                }
+
+                Entries.Add(new ImageDataSetEntry(falsyImagePath, sideSize, false));
+                falsyImagesCount++;
             }
         }
     }
