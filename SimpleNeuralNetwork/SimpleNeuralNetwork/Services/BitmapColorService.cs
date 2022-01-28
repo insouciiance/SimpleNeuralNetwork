@@ -25,9 +25,9 @@ namespace SimpleNeuralNetwork.Services
                 for (int j = 0; j < bitmap.Height; j++)
                 {
                     Color pixel = bitmap.GetPixel(i, j);
-                    colors[i * bitmap.Width + j] = pixel.R;
-                    colors[bitmap.Width * bitmap.Height + i * bitmap.Width + j] = pixel.G;
-                    colors[2 * bitmap.Width * bitmap.Height + i * bitmap.Width + j] = pixel.B;
+                    colors[i * bitmap.Width + j] = pixel.R / 255;
+                    colors[bitmap.Width * bitmap.Height + i * bitmap.Width + j] = pixel.G / 255;
+                    colors[2 * bitmap.Width * bitmap.Height + i * bitmap.Width + j] = pixel.B / 255;
                 }
             }
 
