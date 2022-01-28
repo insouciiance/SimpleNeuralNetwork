@@ -1,4 +1,6 @@
 ﻿using System;
+using SimpleNeuralNetwork.Data;
+using SimpleNeuralNetwork.Services;
 
 namespace SimpleNeuralNetworkTest
 {
@@ -6,7 +8,8 @@ namespace SimpleNeuralNetworkTest
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            ImageDataSet dataSet = new(@"D:\Downloads\data\cropped", @"D:\Downloads\data\falsy");
+            int[] colors = BitmapColorService.GetBitmapColors(dataSet.Entries[0].GetBitmap(100));
         }
     }
 }
