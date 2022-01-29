@@ -101,19 +101,19 @@ namespace SimpleNeuralNetwork.Core
 
                 double[] dw = new double[SidePixelSize * SidePixelSize * 3];
 
-                for (int j = 0; j < _imagesColors[i].Length; j++)
+                Parallel.For(0, _imagesColors[i].Length, j =>
                 {
                     dw[j] = _imagesColors[i][j] * dz;
-                }
+                });
 
                 double db = dz;
 
                 totalLoss += loss;
 
-                for (int j = 0; j < dw.Length; j++)
+                Parallel.For(0, dw.Length, j =>
                 {
                     totalDw[j] += dw[j];
-                }
+                });
 
                 totalDb += db;
             });
@@ -122,17 +122,17 @@ namespace SimpleNeuralNetwork.Core
             
             double[] avgDw = new double[SidePixelSize * SidePixelSize * 3];
 
-            for (int i = 0; i < totalDw.Length; i++)
+            Parallel.For(0, totalDw.Length, i =>
             {
                 avgDw[i] = totalDw[i] / DataSetSize;
-            }
+            });
 
             double avgDb = totalDb / DataSetSize;
 
-            for (int i = 0; i < W.Length; i++)
+            Parallel.For(0, W.Length, i =>
             {
                 W[i] -= avgDw[i] * learningRate;
-            }
+            });
 
             B -= avgDb * learningRate;
 
