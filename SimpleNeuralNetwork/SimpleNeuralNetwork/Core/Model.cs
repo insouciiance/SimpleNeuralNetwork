@@ -34,7 +34,7 @@ namespace SimpleNeuralNetwork.Core
             SidePixelSize = dataSet.SidePixelSize;
         }
 
-        public void Train(int iterationsCount = 500, double learningRate = 0.5)
+        public void Train(int iterationsCount = 1000, double learningRate = 0.05)
         {
             Prepare();
 
@@ -47,10 +47,7 @@ namespace SimpleNeuralNetwork.Core
 
                 iterationsDone++;
 
-                if (iterationsDone % 50 == 0)
-                {
-                    Console.WriteLine($"i == {iterationsDone} loss == {avgLoss}");
-                }
+                Console.WriteLine($"i == {iterationsDone} loss == {avgLoss}");
             });
         }
 

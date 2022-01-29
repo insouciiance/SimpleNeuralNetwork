@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using SimpleNeuralNetwork.Core;
 using SimpleNeuralNetwork.Data;
 using SimpleNeuralNetwork.Services;
@@ -7,11 +8,13 @@ namespace SimpleNeuralNetworkTest
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            ImageDataSet dataSet = new(@"D:\Downloads\data\cropped", @"D:\Downloads\data\falsy", 100, 100);
+            ImageDataSet dataSet = new("truthy", "falsy", 100, 250);
             Model model = new (dataSet);
             model.Train();
+
+            await ModelSerializer.SerializeToFileAsync(model, "model.txt");
 
             while (true)
             {
